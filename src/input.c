@@ -62,6 +62,7 @@ void init_volume_control() {
   vol_elem = snd_mixer_find_selem(vol_handle, sid);
 
   snd_mixer_selem_get_playback_volume_range(vol_elem, &vol_min, &vol_max);
+  SDL_Log("vol_max: %ld", vol_max);
   
 }
 
@@ -78,8 +79,8 @@ void change_volume(bool up) {
     volume = 0;
   }
 
-  snd_mixer_selem_set_playback_volume_all(vol_elem, (volume / 100) * vol_max);
-  // snd_mixer_selem_set_playback_volume_all(volume * max / 100);
+  //SDL_Log("change volume: %ld, %f", volume, (vol_max / (float)100));
+  snd_mixer_selem_set_playback_volume_all(vol_elem, volume * (vol_max / (float)100));
 }
 
 void cleanup_volume_control() {
