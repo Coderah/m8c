@@ -37,6 +37,10 @@ typedef struct input_msg_s {
   uint32_t eventType;
 } input_msg_s;
 
+void init_volume_control();
+void change_volume(bool up = false);
+void cleanup_volume_control();
+
 int initialize_game_controllers();
 void close_game_controllers();
 input_msg_s get_input_msg(config_params_s *conf);

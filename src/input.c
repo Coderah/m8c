@@ -43,9 +43,9 @@ uint8_t toggle_input_keyjazz() {
 
 long volume=85;
 long vol_min, vol_max;
+snd_mixer_elem_t* vol_elem
 
-void init_volume_control()
-{
+void init_volume_control() {
   snd_mixer_t *handle;
   snd_mixer_selem_id_t *sid;
   const char *card = "hw:4";
@@ -59,12 +59,30 @@ void init_volume_control()
   snd_mixer_selem_id_alloca(&sid);
   snd_mixer_selem_id_set_index(sid, 0);
   snd_mixer_selem_id_set_name(sid, selem_name);
-  snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+  vol_elem = snd_mixer_find_selem(handle, sid);
 
-  snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
-  snd_mixer_selem_set_playback_volume_all((volume / 100) * max);
+  snd_mixer_selem_get_playback_volume_range(vol_elem, &vol_min, &vol_max);
+  
+}
+
+void change_volume(bool up = false) {
+  if (up) {
+    volume = volume + 1;
+  } else {
+    volume = volume - 1;
+  }
+
+  if (volume > 100) {
+    volume = 100;
+  } else if (volume < 0) {
+    volume = 0;
+  }
+
+  snd_mixer_selem_set_playback_volume_all((volume / 100) * vol_max);
   // snd_mixer_selem_set_playback_volume_all(volume * max / 100);
+}
 
+void cleanup_volume_control() {
   snd_mixer_close(handle);
 }
 
@@ -445,6 +463,14 @@ void handle_sdl_events(config_params_s *conf) {
     if (event.key.keysym.sym == SDLK_F4 &&
         (event.key.keysym.mod & KMOD_ALT) > 0) {
       key = (input_msg_s){special, msg_quit};
+      break;
+    }
+
+    if (event.key.keysym.sym = SDLK_VOLUMEDOWN) {
+      change_volume(false);
+      break;
+    } else if (event.key.keysym.sym = SDLK_VOLUMEUP) {
+      change_volume(true);
       break;
     }
 

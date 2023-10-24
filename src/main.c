@@ -78,6 +78,7 @@ int main(int argc, char *argv[]) {
 
   // initial scan for (existing) game controllers
   initialize_game_controllers();
+  init_volume_control();
 
 #ifdef DEBUG_MSG
   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
@@ -164,6 +165,7 @@ int main(int argc, char *argv[]) {
           audio_destroy();
         }
         close_game_controllers();
+        cleanup_volume_control();
         close_renderer();
         kill_inline_font();
         SDL_free(serial_buf);
@@ -275,6 +277,7 @@ int main(int argc, char *argv[]) {
   if (conf.audio_enabled == 1) {
     audio_destroy();
   }
+  cleanup_volume_control();
   close_game_controllers();
   close_renderer();
   close_serial_port();
