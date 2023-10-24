@@ -4,6 +4,7 @@
 #ifndef INPUT_H_
 #define INPUT_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "config.h"
 
@@ -38,7 +39,7 @@ typedef struct input_msg_s {
 } input_msg_s;
 
 void init_volume_control();
-void change_volume(bool up = false);
+void change_volume(bool up);
 void cleanup_volume_control();
 
 int initialize_game_controllers();
