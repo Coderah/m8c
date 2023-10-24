@@ -8,6 +8,7 @@
 #include "config.h"
 #include "input.h"
 #include "render.h"
+#include<alsa/asoundlib.h>
 
 #define MAX_CONTROLLERS 4
 
@@ -37,6 +38,34 @@ input_msg_s key = {normal, 0};
 uint8_t toggle_input_keyjazz() {
   keyjazz_enabled = !keyjazz_enabled;
   return keyjazz_enabled;
+}
+
+
+long volume=85;
+long vol_min, vol_max;
+
+void init_volume_control()
+{
+  snd_mixer_t *handle;
+  snd_mixer_selem_id_t *sid;
+  const char *card = "hw:4";
+  const char *selem_name = "Headphone";
+
+  snd_mixer_open(&handle, 0);
+  snd_mixer_attach(handle, card);
+  snd_mixer_selem_register(handle, NULL, NULL);
+  snd_mixer_load(handle);
+
+  snd_mixer_selem_id_alloca(&sid);
+  snd_mixer_selem_id_set_index(sid, 0);
+  snd_mixer_selem_id_set_name(sid, selem_name);
+  snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+
+  snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
+  snd_mixer_selem_set_playback_volume_all((volume / 100) * max);
+  // snd_mixer_selem_set_playback_volume_all(volume * max / 100);
+
+  snd_mixer_close(handle);
 }
 
 // Opens available game controllers and returns the amount of opened controllers
