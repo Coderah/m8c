@@ -17,11 +17,13 @@ int audio_init(int audio_buffer_size, const char* output_device_name) {
   int i = 0;
   int m8_device_id = -1;
   int devcount_in = 0; // audio input device count
+  int devcount_out = 0;
 
   // wait for system to initialize possible new audio devices
   SDL_Delay(500);
 
   devcount_in = SDL_GetNumAudioDevices(SDL_TRUE);
+  devcount_out = SDL_GetNumAudioDevices(0);
 
   if (devcount_in < 1) {
     SDL_Log("No audio capture devices, SDL Error: %s", SDL_GetError());
@@ -30,6 +32,7 @@ int audio_init(int audio_buffer_size, const char* output_device_name) {
     for (i = 0; i < devcount_in; i++) {
       // Check if input device exists before doing anything else
       SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO, "%s", SDL_GetAudioDeviceName(i, SDL_TRUE));
+      SDL_Log("audio input device found: %s", SDL_GetAudioDeviceName(i, SDL_TRUE));
       if (SDL_strstr(SDL_GetAudioDeviceName(i, SDL_TRUE), "M8") != NULL) {
         SDL_Log("M8 Audio Input device found: %s",
                 SDL_GetAudioDeviceName(i, SDL_TRUE));
@@ -42,7 +45,13 @@ int audio_init(int audio_buffer_size, const char* output_device_name) {
       return 0;
     }
 
+    for (i = 0; i < devcount_out; i++) {
+      SDL_Log("audio output device found: %s", SDL_GetAudioDeviceName(i, 0));
+    }
+
     SDL_AudioSpec want_in, have_in, want_out, have_out;
+
+
 
     // Open output device first to avoid possible Directsound errors
     SDL_zero(want_out);
